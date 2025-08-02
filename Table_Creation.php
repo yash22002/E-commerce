@@ -14,16 +14,15 @@ if(mysqli_query($Connection,$Database)){
     die($Connection);
 }
 
-$Craete_Table="CREATE TABLE IF NOT EXISTS Signup (
+$Craete_Table = "CREATE TABLE IF NOT EXISTS Signup (
     ID INT AUTO_INCREMENT PRIMARY KEY,
     NAME VARCHAR(100) NOT NULL,
     EMAIL VARCHAR(100) NOT NULL UNIQUE,
-    CONTACT VARCHAR(15),
+    CONTACT VARCHAR(15) NOT NULL,
     PASSWORD VARCHAR(255) NOT NULL,
     C_PASSWORD VARCHAR(255) NOT NULL,
     STATUS VARCHAR(20) DEFAULT 'INACTIVE'
-);
-";
+);";
 if(mysqli_query($Connection,$Craete_Table)){
     // echo "Crate Table";
 }else{
