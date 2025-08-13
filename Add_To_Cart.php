@@ -39,6 +39,7 @@ $TotalAmount = 0;
     <meta charset="UTF-8">
     <title>Your Cart</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+      <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link rel="stylesheet" href="CSS/Modes.css">
     
 
@@ -103,7 +104,9 @@ $TotalAmount = 0;
             <?php while ($row = mysqli_fetch_assoc($result)):
                 $TotalAmount += $row['SUBTOTAL'];
             ?>
-            <div class="col-md-4">
+            <div class="col-md-4" data-aos="fade-right"
+     data-aos-offset="300"
+     data-aos-easing="ease-in-sine">
                 <div class="card cart-card h-100 shadow-sm">
                     <img src="<?php echo htmlspecialchars($row['FILE_PATH']); ?>" class="card-img-top" alt="Product Image">
                     <div class="card-body d-flex flex-column">
@@ -130,5 +133,12 @@ $TotalAmount = 0;
 </div>
 <script src="JS/Mode.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+  AOS.init({
+    duration: 800, // animation duration in ms
+    once: true,    // animate only once when scrolling
+  });
+</script>
 </body>
 </html>
