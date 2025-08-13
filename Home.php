@@ -144,6 +144,35 @@ if($Result_Accessories){
 </nav>
 
 
+<!-- Hero Slideshow -->
+<div id="shoppingCarousel" class="carousel slide" data-bs-ride="carousel">
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <img src="https://images-eu.ssl-images-amazon.com/images/G/31/img22/WLA/2025/Uber/Unrec_GW/Updated/NewUpdate_DesktopHeroTemplate_3000x1200_ref._CB550300935_.jpg" class="d-block w-100" style= "height: 540px; object-fit: cover;" alt="Shopping 1">
+    </div>
+    <div class="carousel-item">
+      <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30" class="d-block w-100" style="height: 540px; object-fit: cover;" alt="Shopping 2">
+    </div>
+    <div class="carousel-item">
+      <img src="https://rukminim2.flixcart.com/fk-p-flap/1620/270/image/f9ef0cb53d251e79.jpeg?q=90" class="d-block w-100" style="height: 540px; object-fit: cover;" alt="Shopping 3">
+    </div>
+  </div>
+
+  <!-- Carousel Controls -->
+  <button class="carousel-control-prev" type="button" data-bs-target="#shoppingCarousel" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon"></span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#shoppingCarousel" data-bs-slide="next">
+    <span class="carousel-control-next-icon"></span>
+  </button>
+
+  <!-- Carousel Indicators -->
+  <div class="carousel-indicators">
+    <button type="button" data-bs-target="#shoppingCarousel" data-bs-slide-to="0" class="active"></button>
+    <button type="button" data-bs-target="#shoppingCarousel" data-bs-slide-to="1"></button>
+    <button type="button" data-bs-target="#shoppingCarousel" data-bs-slide-to="2"></button>
+  </div>
+</div>
 
    <div class="container mt-4">
 
