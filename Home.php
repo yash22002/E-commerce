@@ -62,9 +62,11 @@ if($Result_Accessories){
   <title>ShopEase - Navbar</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"> <!-- For cart icon -->
   <link rel="stylesheet" href="CSS/Home.css">
   <link rel="stylesheet" href="CSS/Modes.css">
+
 </head>
 <body>
 
@@ -150,9 +152,9 @@ if($Result_Accessories){
   <div class="row g-4">
     <?php while($row = mysqli_fetch_assoc($Result_Laptop)) { ?>
     <div class="col-md-4">
-      <div class="card h-100">
+      <div class="card h-100"  data-aos="zoom-in-up">
         <img src="<?php echo $row['FILE_PATH']; ?>" class="card-img-top" alt="Laptop Image" height="200">
-        <div class="card-body d-flex flex-column">
+        <div class="card-body d-flex flex-column" data-aos="zoom-in">
           <h5 class="card-title"><?php echo $row['ITEM_NAME']; ?></h5>
           <p class="card-text"><?php echo $row['DESCRIPTION']; ?></p>
           <p class="card-text fw-bold text-success">₹<?php echo $row['PRICE']; ?></p>
@@ -177,9 +179,9 @@ if($Result_Accessories){
 <div class="row g-4">
   <?php while($row = mysqli_fetch_assoc($Result_TV)) { ?>
   <div class="col-md-4">
-    <div class="card h-100">
+    <div class="card h-100" data-aos="zoom-in-up">
       <img src="<?php echo $row['FILE_PATH']; ?>" class="card-img-top" alt="TV or Fridge" height="200">
-      <div class="card-body d-flex flex-column">
+      <div class="card-body d-flex flex-column" data-aos="zoom-in">
         <h5 class="card-title"><?php echo $row['ITEM_NAME']; ?></h5>
         <p class="card-text"><?php echo $row['DESCRIPTION']; ?></p>
         <p class="card-text fw-bold text-success">₹<?php echo $row['PRICE']; ?></p>
@@ -202,9 +204,9 @@ if($Result_Accessories){
 <div class="row g-4">
   <?php while($row = mysqli_fetch_assoc($Result_Electronics)) { ?>
   <div class="col-md-4">
-    <div class="card h-100">
+    <div class="card h-100" data-aos="zoom-in-up">
       <img src="<?php echo $row['FILE_PATH']; ?>" class="card-img-top" alt="Electronic Item" height="200">
-      <div class="card-body d-flex flex-column">
+      <div class="card-body d-flex flex-column" data-aos="zoom-in">
         <h5 class="card-title"><?php echo $row['ITEM_NAME']; ?></h5>
         <p class="card-text"><?php echo $row['DESCRIPTION']; ?></p>
         <p class="card-text fw-bold text-success">₹<?php echo $row['PRICE']; ?></p>
@@ -227,14 +229,14 @@ if($Result_Accessories){
 <div class="row g-4">
   <?php while($Row = mysqli_fetch_assoc($Result_Accessories)) { ?>
     <div class="col-md-4">
-      <div class="card h-100 shadow-sm">
+      <div class="card h-100 shadow-sm" data-aos="zoom-in-up">
         <img 
           src="<?php echo htmlspecialchars($Row['FILE_PATH']); ?>" 
           class="card-img-top" 
           alt="<?php echo htmlspecialchars($Row['ITEM_NAME']); ?>" 
           style="height: 200px; object-fit: cover;"
         >
-        <div class="card-body d-flex flex-column">
+        <div class="card-body d-flex flex-column" data-aos="zoom-in">
           <h5 class="card-title"><?php echo htmlspecialchars($Row['ITEM_NAME']); ?></h5>
           <p class="card-text"><?php echo htmlspecialchars($Row['DESCRIPTION']); ?></p>
           <p class="card-text fw-bold text-success">₹<?php echo number_format($Row['PRICE']); ?></p>
@@ -253,5 +255,12 @@ if($Result_Accessories){
     </div>
   </div>
 <script src="JS/Mode.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+  AOS.init({
+    duration: 800, // animation duration in ms
+    once: true,    // animate only once when scrolling
+  });
+</script>
 </body>
 </html>
