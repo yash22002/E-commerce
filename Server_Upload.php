@@ -5,6 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Upload File</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script>
+    // 🔹 Show/Hide new category input when "Add New Category" is selected
+    function toggleNewCategory(select) {
+      const newCatDiv = document.getElementById("newCategoryDiv");
+      if (select.value === "new") {
+        newCatDiv.style.display = "block";
+        document.getElementById("new_category").setAttribute("required", "true");
+      } else {
+        newCatDiv.style.display = "none";
+        document.getElementById("new_category").removeAttribute("required");
+      }
+    }
+  </script>
 </head>
 <body class="bg-light">
 
@@ -17,13 +30,20 @@
         <!-- Item Category Dropdown -->
         <div class="mb-3">
           <label for="category" class="form-label">Select Item Category:</label>
-          <select class="form-select" id="category" name="category" required>
+          <select class="form-select" id="category" name="category" required onchange="toggleNewCategory(this)">
             <option value="" disabled selected>Choose a category</option>
             <option value="Laptops">Laptops</option>
             <option value="TV & Fridge">TV & Fridge</option>
             <option value="Electronics">Electronics</option>
             <option value="Accessories">Accessories</option>
+            <option value="new">➕ Add New Category</option>
           </select>
+        </div>
+
+        <!-- New Category Input (hidden by default) -->
+        <div class="mb-3" id="newCategoryDiv" style="display:none;">
+          <label for="new_category" class="form-label">Enter New Category:</label>
+          <input type="text" class="form-control" id="new_category" name="new_category" placeholder="e.g., Furniture">
         </div>
 
         <!-- Item Name Input -->
