@@ -1,14 +1,8 @@
 <?php
-
 include("Connection.php");
 include("Table_Creation.php");
 
-if(isset($_FILES['file'])){
-
-    echo "<pre>";
-    print_r($_FILES['file']);
-    echo "<pre>";
-
+if (isset($_POST['submit']) && isset($_FILES['file'])) {
 
     $Category    = $_POST['category'];
     $item_name   = $_POST['item_name'];
@@ -16,71 +10,37 @@ if(isset($_FILES['file'])){
     $price       = $_POST['price'];
     $description = $_POST['description'];
 
+    // Agar user "new" select kare to naya category lo
+    if ($Category === "new" && !empty($_POST['new_category'])) {
+        $Category = trim($_POST['new_category']);
+    }
+
+    // File handling
     $fileName = $_FILES['file']['name'];
     $TempName = $_FILES['file']['tmp_name'];
-    $fileDestination = '';
 
+    // Folder path set
+    $folderPath = "Items/" . $Category . "/";
 
-    if($Category == "Laptops"){
-        $fileDestination = 'Items/Laptops/' . basename($fileName);
-        if(move_uploaded_file($TempName,$fileDestination)){
-            $query = "INSERT INTO PRODUCTS (CATEGORY, ITEM_NAME, MODEL, PRICE, DESCRIPTION, FILE_PATH)
-          VALUES ('$Category', '$item_name', '$model', '$price', '$description', '$fileDestination')";
+    // Agar folder exist nahi karta to create kar do
+    if (!is_dir($folderPath)) {
+        mkdir($folderPath, 0777, true);
+    }
 
+    $fileDestination = $folderPath . basename($fileName);
+
+    if (move_uploaded_file($TempName, $fileDestination)) {
+        $query = "INSERT INTO PRODUCTS (CATEGORY, ITEM_NAME, MODEL, PRICE, DESCRIPTION, FILE_PATH) 
+                  VALUES ('$Category', '$item_name', '$model', '$price', '$description', '$fileDestination')";
+
+        if (mysqli_query($Connection, $query)) {
+            header("Location: Server_Upload.php");
+            exit;
+        } else {
+            echo "❌ Database Error: " . mysqli_error($Connection);
         }
-        if(mysqli_query($Connection,$query)){
-           header("location:Server_Upload.php");
-            // echo "File Uploaded";
-        }else{
-            echo mysqli_error($Connection);
-        }
-
-    }elseif($Category == "TV & Fridge"){
-        $fileDestination='Items/Tv & Fredges/' . basename($fileName);
-        if(move_uploaded_file($TempName,$fileDestination)){
-            $query = "INSERT INTO PRODUCTS (CATEGORY, ITEM_NAME, MODEL, PRICE, DESCRIPTION, FILE_PATH)
-          VALUES ('$Category', '$item_name', '$model', '$price', '$description', '$fileDestination')";
-
-        }
-        if(mysqli_query($Connection,$query)){
-            header("location:Server_Upload.php");
-            // echo "File Uploaded";
-
-        }else{
-            echo mysqli_error($Connection);
-        }
-
-    }elseif($Category == "Electronics"){
-        $fileDestination='Items/Electronics/' . basename($fileName);
-        if(move_uploaded_file($TempName,$fileDestination)){
-            $query = "INSERT INTO PRODUCTS (CATEGORY, ITEM_NAME, MODEL, PRICE, DESCRIPTION, FILE_PATH)
-          VALUES ('$Category', '$item_name', '$model', '$price', '$description', '$fileDestination')";
-        }
-        if(mysqli_query($Connection,$query)){
-            header("location:Server_Upload.php");
-            // echo "File Uploaded";
-        }else{
-            echo mysqli_error($Connection);
-        }
-
-    }elseif($Category == "Accessories"){
-        $fileDestination='Items/Accessories/' . basename($fileName);
-        if(move_uploaded_file($TempName,$fileDestination)){
-            $query = "INSERT INTO PRODUCTS (CATEGORY, ITEM_NAME, MODEL, PRICE, DESCRIPTION, FILE_PATH)
-          VALUES ('$Category', '$item_name', '$model', '$price', '$description', '$fileDestination')";
-        }
-        if(mysqli_query($Connection,$query)){
-            header("location:Server_Upload.php");
-            // echo "File Uploaded";
-        }else{
-            echo mysqli_error($Connection);
-        }
-
-    }else{
-
-        echo "Default Choice";
-
-    }    
-
+    } else {
+        echo "❌ File Upload Failed!";
+    }
 }
 ?>
