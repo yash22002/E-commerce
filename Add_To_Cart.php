@@ -72,22 +72,54 @@ $TotalAmount = 0;
       </ul>
 
       <!-- User Info -->
-      <ul class="navbar-nav mb-2 mb-lg-0">
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            👤 <?php echo htmlspecialchars($_SESSION['name']); ?>
-          </a>
-          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-            <li><span class="dropdown-item-text fw-bold">Email: <?php echo htmlspecialchars($_SESSION['email']); ?></span></li>
-            <li><hr class="dropdown-divider"></li>
-            <li>
-              <form action="Home.php" method="POST">
-                <button type="submit" name="log-out" class="dropdown-item text-danger">Logout</button>
-              </form>
-            </li>
-          </ul>
-        </li>
-      </ul>
+<!-- User Info -->
+<ul class="navbar-nav mb-2 mb-lg-0">
+  <li class="nav-item dropdown">
+    <button class="btn btn-outline-primary dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown">
+      <i class="bi bi-person-circle me-2"></i> <?php echo htmlspecialchars($_SESSION['name']); ?>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end shadow p-3 rounded-3" style="min-width: 260px;">
+      
+      <!-- User Info Card -->
+      <li class="text-center mb-2">
+        <i class="bi bi-person-circle text-primary" style="font-size: 2.5rem;"></i>
+        <h6 class="mt-2 mb-0 fw-bold"><?php echo htmlspecialchars($_SESSION['name']); ?></h6>
+        <small class="text-muted"><?php echo htmlspecialchars($_SESSION['email']); ?></small>
+        <?php
+          // ✅ Fetch status (Online/Offline)
+          $statusQuery = mysqli_query($Connection, "SELECT STATUS FROM Signup WHERE EMAIL = '$UserEmail'");
+          $statusRow = mysqli_fetch_assoc($statusQuery);
+          $UserStatus = $statusRow['STATUS'] ?? 'Offline';
+        ?>
+        <div class="badge bg-<?php echo ($UserStatus=="Online" ? "success" : "secondary"); ?> mt-2">
+          <?php echo $UserStatus; ?>
+        </div>
+      </li>
+
+      <li><hr class="dropdown-divider"></li>
+
+      <!-- Profile Actions -->
+      <li>
+        <a class="dropdown-item d-flex align-items-center" href="Home.php">
+          <i class="bi bi-house-door me-2"></i> Home
+        </a>
+      </li>
+      <li>
+        <a class="dropdown-item d-flex align-items-center" href="Checkout.php">
+          <i class="bi bi-credit-card me-2"></i> Checkout
+        </a>
+      </li>
+      <li>
+        <form action="Home.php" method="POST" class="m-0">
+          <button type="submit" name="log-out" class="dropdown-item d-flex align-items-center text-danger">
+            <i class="bi bi-box-arrow-right me-2"></i> Logout
+          </button>
+        </form>
+      </li>
+    </ul>
+  </li>
+</ul>
+
       <!-- Mode Toggle -->
         <button class="btn btn-outline-secondary ms-2" onclick="toggleMode()" id="modeBtn">
         🌙 Dark Mode
