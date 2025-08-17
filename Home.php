@@ -3,23 +3,22 @@ session_start();
 include("Connection.php");
 include("Table_Creation.php");
 
-// ✅ Redirect if user is not logged in
+// Redirect if user is not logged in
 if (!isset($_SESSION['email']) || !isset($_SESSION['name'])) {
     header("Location: Log-in.php");
     exit();
 }
 
-// ✅ Session values
 $Name = $_SESSION['name'];
 $Email = $_SESSION['email'];
 
-// ✅ Set user status to 'Online' only if not already set
+// Set user status to 'Online'
 $Status = "Online";
 $updateStatus = mysqli_prepare($Connection, "UPDATE Signup SET STATUS = ? WHERE EMAIL = ?");
 mysqli_stmt_bind_param($updateStatus, "ss", $Status, $Email);
 mysqli_stmt_execute($updateStatus);
 
-// ✅ Logout logic
+// Logout
 if (isset($_POST['log-out'])) {
     $Offline = "Offline";
     $update = mysqli_prepare($Connection, "UPDATE Signup SET STATUS = ? WHERE EMAIL = ?");
@@ -31,236 +30,168 @@ if (isset($_POST['log-out'])) {
     exit();
 }
 
-// ✅ Fetch categories
-$Result_TV = mysqli_query($Connection, "SELECT * FROM PRODUCTS WHERE CATEGORY = 'TV & Fridge'");
-$Result_Laptop = mysqli_query($Connection, "SELECT * FROM PRODUCTS WHERE CATEGORY = 'Laptops'");
-$Result_Electronics = mysqli_query($Connection, "SELECT * FROM PRODUCTS WHERE CATEGORY = 'Electronics'");
-$Result_Accessories = mysqli_query($Connection, "SELECT * FROM PRODUCTS WHERE CATEGORY = 'Accessories'");
+// Handle search
+$searchQuery = "";
+if (isset($_GET['search']) && !empty($_GET['search'])) {
+    $searchQuery = mysqli_real_escape_string($Connection, $_GET['search']);
+    $searchSQL = "SELECT * FROM PRODUCTS WHERE ITEM_NAME LIKE '%$searchQuery%' OR CATEGORY LIKE '%$searchQuery%'";
+    $Result_Search = mysqli_query($Connection, $searchSQL);
+}
+
+// Function to render products + modal
+function renderSection($title, $result) {
+    if(mysqli_num_rows($result) > 0) {
+        echo "<h2 class='section-title mt-5'>$title</h2><div class='row g-4'>";
+        while($row = mysqli_fetch_assoc($result)) { ?>
+            <div class="col-md-4">
+                <div class="card h-100" data-aos="zoom-in-up">
+                    <img src="<?php echo $row['FILE_PATH']; ?>" class="card-img-top"
+                         data-bs-toggle="modal" data-bs-target="#productModal<?php echo $row['ID']; ?>">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title"><?php echo $row['ITEM_NAME']; ?></h5>
+                        <p class="card-text fw-bold text-success">₹<?php echo $row['PRICE']; ?></p>
+                        <button class="btn btn-primary w-100 mb-2"
+                                data-bs-toggle="modal" data-bs-target="#productModal<?php echo $row['ID']; ?>">
+                            View Details
+                        </button>
+                        <form action="Cart.php" method="POST" class="mt-auto">
+                            <input type="hidden" name="product_id" value="<?php echo $row['ID']; ?>">
+                            <input type="number" name="quantity" value="1" min="1" class="form-control mb-2" required>
+                            <button type="submit" class="btn btn-warning w-100">Add to Cart 🛒</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal -->
+            <div class="modal fade" id="productModal<?php echo $row['ID']; ?>" tabindex="-1">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title"><?php echo $row['ITEM_NAME']; ?></h5>
+                            <button class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body row">
+                            <div class="col-md-6">
+                                <img src="<?php echo $row['FILE_PATH']; ?>" class="img-fluid rounded">
+                            </div>
+                            <div class="col-md-6">
+                                <h4 class="text-success">₹<?php echo $row['PRICE']; ?></h4>
+                                <p><?php echo $row['DESCRIPTION']; ?></p>
+                                <p class="text-danger"><strong>Discount:</strong> 10% OFF</p>
+                                <form action="Cart.php" method="POST">
+                                    <input type="hidden" name="product_id" value="<?php echo $row['ID']; ?>">
+                                    <label class="form-label mt-2">Quantity:</label>
+                                    <input type="number" name="quantity" value="1" min="1" class="form-control mb-2" required>
+                                    <button type="submit" class="btn btn-success w-100 mt-2">Buy Now 🚀</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <?php }
+        echo "</div>";
+    } else {
+        echo "<h4 class='mt-4 text-center text-muted'>No products found.</h4>";
+    }
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ShopEase - Navbar</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
-  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-  <link rel="stylesheet" href="CSS/Home.css">
-  <link rel="stylesheet" href="CSS/Modes.css">
-  <style>
-    /* Responsive card images */
-    .card-img-top {
-      height: 200px;
-      object-fit: cover;
-    }
-    @media (max-width: 768px) {
-      .card-img-top {
-        height: 150px;
-      }
-    }
-    /* Responsive carousel images */
-    .carousel-inner img {
-      height: 540px;
-      object-fit: cover;
-    }
-    @media (max-width: 768px) {
-      .carousel-inner img {
-        height: 300px;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShopEase - Home</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+<link rel="stylesheet" href="CSS/Home.css">
+<link rel="stylesheet" href="CSS/Modes.css">
+<style>
+.card-img-top{height:200px;object-fit:cover;cursor:pointer;}
+@media(max-width:768px){.card-img-top{height:150px;}}
+</style>
 </head>
 <body>
 
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
   <div class="container">
-    <a class="navbar-brand fw-bold text-primary" href="#">
-      <img src="https://cdn-icons-png.flaticon.com/512/891/891462.png" alt="logo" width="30" height="30" class="d-inline-block align-text-top me-2">
-      Shopterra
-    </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+    <a class="navbar-brand fw-bold text-primary" href="#"><img src="https://cdn-icons-png.flaticon.com/512/891/891462.png" width="30" class="me-2">ShopEase</a>
+    <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div class="collapse navbar-collapse" id="mainNavbar">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-4">
+      <ul class="navbar-nav me-auto ms-4">
         <li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
         <li class="nav-item"><a class="nav-link" href="#">Shop</a></li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdown" data-bs-toggle="dropdown">Categories</a>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Laptops</a></li>
-            <li><a class="dropdown-item" href="#">TV & Fridge</a></li>
-            <li><a class="dropdown-item" href="#">Electronics</a></li>
-            <li><a class="dropdown-item" href="#">Accessories</a></li>
-          </ul>
-        </li>
-        <li class="nav-item"><a class="nav-link" href="#">About Us</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
       </ul>
 
-      <form class="d-flex me-3" role="search">
-        <input class="form-control me-2" type="search" placeholder="Search products...">
+      <!-- Search -->
+      <form class="d-flex me-3" method="GET">
+        <input class="form-control me-2" type="search" name="search" placeholder="Search products..." value="<?php echo htmlspecialchars($searchQuery); ?>">
         <button class="btn btn-outline-primary" type="submit">Search</button>
       </form>
 
-      <a href="#" class="btn btn-outline-dark me-2 position-relative">
+      <!-- Cart -->
+      <a href="Cart.php" class="btn btn-outline-dark me-2 position-relative">
         <i class="bi bi-cart"></i>
         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">3</span>
       </a>
 
+      <!-- Profile Dropdown -->
       <div class="dropdown">
-        <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-          👤 <?php echo $Name; ?>
+        <button class="btn btn-outline-primary dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown">
+          <i class="bi bi-person-circle me-2"></i> <?php echo $Name; ?>
         </button>
-        <ul class="dropdown-menu dropdown-menu-end">
-          <li><span class="dropdown-item-text fw-bold">Name: <?php echo $Name; ?></span></li>
-          <li><span class="dropdown-item-text fw-bold">Email: <?php echo $Email; ?></span></li>
-          <li><span class="dropdown-item-text fw-bold">Status: <?php echo $Status; ?></span></li>
+        <ul class="dropdown-menu dropdown-menu-end shadow p-3 rounded-3" style="min-width:260px;">
+          <li class="text-center mb-2">
+            <i class="bi bi-person-circle text-primary" style="font-size:2.5rem;"></i>
+            <h6 class="mt-2 mb-0 fw-bold"><?php echo $Name; ?></h6>
+            <small class="text-muted"><?php echo $Email; ?></small>
+            <div class="badge bg-<?php echo ($Status=="Online"?"success":"secondary"); ?> mt-2"><?php echo $Status; ?></div>
+          </li>
           <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item d-flex align-items-center" href="#"><i class="bi bi-gear me-2"></i>Account Settings</a></li>
+          <li><a class="dropdown-item d-flex align-items-center" href="Add_To_Cart.php"><i class="bi bi-cart4 me-2"></i>My Cart</a></li>
           <li>
-            <form action="" method="post">
-              <button type="submit" name="log-out" class="dropdown-item text-danger">Logout</button>
+            <form method="post" class="m-0">
+              <button type="submit" name="log-out" class="dropdown-item d-flex align-items-center text-danger">
+                <i class="bi bi-box-arrow-right me-2"></i>Logout
+              </button>
             </form>
           </li>
         </ul>
       </div>
 
-      <button class="btn btn-outline-secondary ms-2" onclick="toggleMode()" id="modeBtn">
-        🌙 Dark Mode
-      </button>
+      <button class="btn btn-outline-secondary ms-2" onclick="toggleMode()" id="modeBtn">🌙 Dark Mode</button>
     </div>
   </div>
 </nav>
 
-<!-- Hero Slideshow -->
-<div id="shoppingCarousel" class="carousel slide" data-bs-ride="carousel">
-  <div class="carousel-inner">
-    <div class="carousel-item active">
-      <img src="https://images-eu.ssl-images-amazon.com/images/G/31/img22/WLA/2025/Uber/Unrec_GW/Updated/NewUpdate_DesktopHeroTemplate_3000x1200_ref._CB550300935_.jpg" class="d-block w-100 img-fluid" alt="Shopping 1">
-    </div>
-    <div class="carousel-item">
-      <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30" class="d-block w-100 img-fluid" alt="Shopping 2">
-    </div>
-    <div class="carousel-item">
-      <img src="https://rukminim2.flixcart.com/fk-p-flap/1620/270/image/f9ef0cb53d251e79.jpeg?q=90" class="d-block w-100 img-fluid" alt="Shopping 3">
-    </div>
-  </div>
-  <button class="carousel-control-prev" type="button" data-bs-target="#shoppingCarousel" data-bs-slide="prev">
-    <span class="carousel-control-prev-icon"></span>
-  </button>
-  <button class="carousel-control-next" type="button" data-bs-target="#shoppingCarousel" data-bs-slide="next">
-    <span class="carousel-control-next-icon"></span>
-  </button>
-  <div class="carousel-indicators">
-    <button type="button" data-bs-target="#shoppingCarousel" data-bs-slide-to="0" class="active"></button>
-    <button type="button" data-bs-target="#shoppingCarousel" data-bs-slide-to="1"></button>
-    <button type="button" data-bs-target="#shoppingCarousel" data-bs-slide-to="2"></button>
-  </div>
-</div>
-
 <div class="container mt-4">
 
-  <!-- Laptops -->
-  <h2 class="section-title">Laptops</h2>
-  <div class="row g-4">
-    <?php while($row = mysqli_fetch_assoc($Result_Laptop)) { ?>
-    <div class="col-md-4">
-      <div class="card h-100" data-aos="zoom-in-up">
-        <img src="<?php echo $row['FILE_PATH']; ?>" class="card-img-top img-fluid" alt="Laptop Image">
-        <div class="card-body d-flex flex-column" data-aos="zoom-in">
-          <h5 class="card-title"><?php echo $row['ITEM_NAME']; ?></h5>
-          <p class="card-text"><?php echo $row['DESCRIPTION']; ?></p>
-          <p class="card-text fw-bold text-success">₹<?php echo $row['PRICE']; ?></p>
-          <form action="Cart.php" method="POST" class="mt-auto">
-            <input type="hidden" name="product_id" value="<?php echo $row['ID']; ?>">
-            <input type="number" name="quantity" value="1" min="1" class="form-control mb-2" required>
-            <button type="submit" class="btn btn-warning w-100">Add to Cart 🛒</button>
-          </form>
-        </div>
-      </div>
-    </div>
-    <?php } ?>
-  </div>
-
-  <!-- TV & Fridge -->
-  <h2 class="section-title mt-4">TV & Fridge</h2>
-  <div class="row g-4">
-    <?php while($row = mysqli_fetch_assoc($Result_TV)) { ?>
-    <div class="col-md-4">
-      <div class="card h-100" data-aos="zoom-in-up">
-        <img src="<?php echo $row['FILE_PATH']; ?>" class="card-img-top img-fluid" alt="TV or Fridge">
-        <div class="card-body d-flex flex-column" data-aos="zoom-in">
-          <h5 class="card-title"><?php echo $row['ITEM_NAME']; ?></h5>
-          <p class="card-text"><?php echo $row['DESCRIPTION']; ?></p>
-          <p class="card-text fw-bold text-success">₹<?php echo $row['PRICE']; ?></p>
-          <form action="Cart.php" method="POST" class="mt-auto">
-            <input type="hidden" name="product_id" value="<?php echo $row['ID']; ?>">
-            <input type="number" name="quantity" value="1" min="1" class="form-control mb-2" required>
-            <button type="submit" class="btn btn-warning w-100">Add to Cart 🛒</button>
-          </form>
-        </div>
-      </div>
-    </div>
-    <?php } ?>
-  </div>
-
-  <!-- Electronics -->
-  <h2 class="section-title mt-4">Electronics</h2>
-  <div class="row g-4">
-    <?php while($row = mysqli_fetch_assoc($Result_Electronics)) { ?>
-    <div class="col-md-4">
-      <div class="card h-100" data-aos="zoom-in-up">
-        <img src="<?php echo $row['FILE_PATH']; ?>" class="card-img-top img-fluid" alt="Electronic Item">
-        <div class="card-body d-flex flex-column" data-aos="zoom-in">
-          <h5 class="card-title"><?php echo $row['ITEM_NAME']; ?></h5>
-          <p class="card-text"><?php echo $row['DESCRIPTION']; ?></p>
-          <p class="card-text fw-bold text-success">₹<?php echo $row['PRICE']; ?></p>
-          <form action="Cart.php" method="POST" class="mt-auto">
-            <input type="hidden" name="product_id" value="<?php echo $row['ID']; ?>">
-            <input type="number" name="quantity" value="1" min="1" class="form-control mb-2" required>
-            <button type="submit" class="btn btn-warning w-100">Add to Cart 🛒</button>
-          </form>
-        </div>
-      </div>
-    </div>
-    <?php } ?>
-  </div>
-
-  <!-- Accessories -->
-  <h2 class="section-title mt-4">Accessories</h2>
-  <div class="row g-4">
-    <?php while($Row = mysqli_fetch_assoc($Result_Accessories)) { ?>
-    <div class="col-md-4">
-      <div class="card h-100 shadow-sm" data-aos="zoom-in-up">
-        <img src="<?php echo htmlspecialchars($Row['FILE_PATH']); ?>" class="card-img-top img-fluid" alt="<?php echo htmlspecialchars($Row['ITEM_NAME']); ?>">
-        <div class="card-body d-flex flex-column" data-aos="zoom-in">
-          <h5 class="card-title"><?php echo htmlspecialchars($Row['ITEM_NAME']); ?></h5>
-          <p class="card-text"><?php echo htmlspecialchars($Row['DESCRIPTION']); ?></p>
-          <p class="card-text fw-bold text-success">₹<?php echo number_format($Row['PRICE']); ?></p>
-          <form action="Cart.php" method="POST" class="mt-auto">
-            <input type="hidden" name="product_id" value="<?php echo $Row['ID']; ?>">
-            <input type="number" name="quantity" value="1" min="1" class="form-control mb-2" required>
-            <button type="submit" class="btn btn-warning w-100">Add to Cart 🛒</button>
-          </form>
-        </div>
-      </div>
-    </div>
-    <?php } ?>
-  </div>
-
+<?php
+if(!empty($searchQuery)){
+    renderSection("Search Results for '$searchQuery'", $Result_Search);
+} else {
+    // Fetch all unique categories dynamically
+    $categoryQuery = mysqli_query($Connection, "SELECT DISTINCT CATEGORY FROM PRODUCTS");
+    while($cat = mysqli_fetch_assoc($categoryQuery)){
+        $catName = $cat['CATEGORY'];
+        $catResult = mysqli_query($Connection, "SELECT * FROM PRODUCTS WHERE CATEGORY='$catName'");
+        renderSection($catName, $catResult);
+    }
+}
+?>
 </div>
 
 <script src="JS/Mode.js"></script>
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-<script>
-  AOS.init({
-    duration: 800,
-    once: true,
-  });
-</script>
+<script>AOS.init({duration:800, once:true});</script>
 </body>
 </html>
