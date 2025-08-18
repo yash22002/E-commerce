@@ -78,6 +78,24 @@ $CreateOrdersTable = "CREATE TABLE IF NOT EXISTS ORDERS (
 if (!mysqli_query($Connection, $CreateOrdersTable)) {
     die("Error creating ORDERS table: " . mysqli_error($Connection));
 }
+// Table creation query stored in variable
+$codTable = "CREATE TABLE IF NOT EXISTS `cod_orders` (
+    `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `name` VARCHAR(100) NOT NULL,
+    `email` VARCHAR(100) NOT NULL,
+    `phone` VARCHAR(15) NOT NULL,
+    `address_type` VARCHAR(20) NOT NULL,
+    `house_no` VARCHAR(50) NOT NULL,
+    `landmark` VARCHAR(100) NOT NULL,
+    `pincode` VARCHAR(10) NOT NULL,
+    `order_date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
 
+// Execute query and check
+if (mysqli_query($Connection, $codTable)) {
+    // echo "Table 'cod_orders' is ready!";
+} else {
+    echo "Error creating table: " . mysqli_error($Connection);
+}
 // echo "All tables are created or already exist.";
 ?>
