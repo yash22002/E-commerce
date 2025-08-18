@@ -120,7 +120,7 @@ function renderSection($title, $result) {
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
   <div class="container">
-    <a class="navbar-brand fw-bold text-primary" href="#"><img src="https://cdn-icons-png.flaticon.com/512/891/891462.png" width="30" class="me-2">ShopEase</a>
+    <a class="navbar-brand fw-bold text-primary" href="#"><img src="https://cdn-icons-png.flaticon.com/512/891/891462.png" width="30" class="me-2">Shopterra</a>
     <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -188,6 +188,50 @@ if(!empty($searchQuery)){
     }
 }
 ?>
+</div>
+<!-- Promotions Section -->
+<div class="container mt-5">
+    <h2 class="text-center mb-4" data-aos="fade-up">🔥 Hot Promotions & Deals 🔥</h2>
+    
+    <!-- Video Promo -->
+    <div class="row justify-content-center mb-5" data-aos="zoom-in">
+        <div class="col-lg-8 col-md-10">
+            <div class="ratio ratio-16x9 shadow rounded-3 overflow-hidden">
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/R3GfuzLMPkA?si=Z5D6aROWvZ2N1Wtc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- Advertisement Banners -->
+    <div class="row g-4">
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+            <div class="card shadow-sm rounded-3 overflow-hidden">
+                <img src="assets/3-11-e1672903814934.jpg" class="card-img-top" alt="Ad 1">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Up to 20% Off Laptops!</h5>
+                    <p class="card-text text-muted">Limited time offer on top brands.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+            <div class="card shadow-sm rounded-3 overflow-hidden">
+                <img src="assets/pexels-xtrovarts-16812192.jpg" class="card-img-top" alt="Ad 2">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Smartphones Mega Sale!</h5>
+                    <p class="card-text text-muted">Grab the latest phones at amazing prices.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+            <div class="card shadow-sm rounded-3 overflow-hidden">
+                <img src="assets/3-20-e1662987253972.jpg" class="card-img-top" alt="Ad 3">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Laptops</h5>
+                    <p class="card-text text-muted">Mouse, Keyboard & More!</p>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script src="JS/Mode.js"></script>
