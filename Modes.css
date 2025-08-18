@@ -1,0 +1,127 @@
+/* Light Mode (Default) */
+:root {
+  --bg-color: #fdfdfd;
+  --text-color: #212529;
+  --navbar-bg: #ffffff;
+  --nav-link-color: #0d6efd;
+  --nav-hover: #0b5ed7;
+  --btn-bg: #0d6efd;
+  --btn-text: #ffffff;
+  --card-bg: #ffffff;
+  --card-text: #212529;
+  --card-shadow: rgba(0, 0, 0, 0.1);
+  --border-color: #dee2e6;
+}
+
+/* Dark Mode */
+body.dark-mode {
+  --bg-color: #0f0f0f;
+  --text-color: #f0f0f0;
+  --navbar-bg: #1e1e1e;
+  --nav-link-color: #66b2ff;
+  --nav-hover: #3399ff;
+  --btn-bg: #343a40;
+  --btn-text: #ffffff;
+  --card-bg: #1b1b1b;
+  --card-text: #e8e8e8;
+  --card-shadow: rgba(255, 255, 255, 0.1);
+  --border-color: #444;
+}
+
+/* Global */
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background 0.4s ease, color 0.4s ease;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Navbar */
+.navbar {
+  background-color: var(--navbar-bg) !important;
+  transition: background 0.4s ease;
+}
+
+.navbar .nav-link {
+  color: var(--nav-link-color) !important;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.navbar .nav-link:hover {
+  color: var(--nav-hover) !important;
+}
+
+.navbar-brand {
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--nav-link-color) !important;
+}
+
+/* Buttons */
+.btn-primary,
+.btn-outline-primary,
+.btn-outline-dark,
+.btn-outline-secondary {
+  border-radius: 8px;
+  font-weight: 500;
+  transition: background 0.3s, color 0.3s, border-color 0.3s;
+}
+
+.btn-primary {
+  background-color: var(--btn-bg);
+  color: var(--btn-text);
+  border-color: var(--btn-bg);
+}
+
+.btn-primary:hover {
+  background-color: #0b5ed7;
+  border-color: #0b5ed7;
+}
+
+.btn-outline-dark {
+  color: blue;
+  border-color: #6c757d;
+}
+
+.btn-outline-dark:hover {
+  background-color: #6c757d;
+  color: white;
+}
+
+/* Cards */
+.card {
+  background-color: var(--card-bg);
+  color: var(--card-text);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: 0 6px 20px var(--card-shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 30px var(--card-shadow);
+}
+
+.card-img-top {
+  height: 200px;
+  object-fit: cover;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+.section-title {
+  text-align: center;
+  margin: 50px 0 30px;
+  font-size: 2.2rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+/* Dark Mode Button */
+#modeBtn {
+  font-weight: 500;
+  border-radius: 20px;
+  padding: 6px 16px;
+}
